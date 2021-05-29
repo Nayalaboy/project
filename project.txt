@@ -1,0 +1,131 @@
+
+                   FORECAST OF DRINKING WATER CONSUMPTION
+
+Burkina Faso, a developing country, is experiencing a number of difficulties, particularly
+in the field of sanitation and also water. Faced with this situation, it is imperative to forecast the future consumption of drinking water in order to put in place effective policies aimed at substantially increasing
+the supply of drinking water.
+
+Prediction of drinking water consumption will be done through three methods.
+
+
+- The first method will consist in forecasting the number of subscribers, and knowing the consumption per head
+average, we end up with water consumption.
+- The second method will consist of forecasting drinking water consumption using ARIMA methods
+- The third forecast will be done through the HoltWinter technique of Exponential Smoothing.
+- The criterion of the root mean square deviation (RMSE), will be our indicator to measure and compare errors
+forecast of each model.
+We retain the model for which this criterion is minimal.
+
+We have data all in excel files.
+
+      Method 1 (Simple linear regression)
+We have monthly data at our disposal. Subscribes the name of the imported series.
+We are going to transform the series into a time series:
+Subscribe.ts <-ts (Subscribe [, 3], start = c (2010,1), end = c (2016,3), frequency = 12)
+regres <-lm (Subscriber.ts∼ T)
+
+summary(regres) :
+Call : lm(formula = Abonne.ts ∼ T)
+Residuals :
+Min 1Q Median 3Q Max
+-4129.1 -1449.3 -418.7 1016.0 7898.4
+Coefficients :
+Estimate Std. Error t value Pr(>|t|)
+(Intercept) 155446.55 517.58 300.3 <2e-16 ***
+T 2387.23 11.83 201.7 <2e-16 ***
+—
+Signif. codes : 0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Residual standard error : 2219 on 73 degrees of freedom
+Multiple R-squared : 0.9982, Adjusted R-squared : 0.9982
+F-statistic : 4.069e+04 on 1 and 73 DF, p-value : < 2.2e-16
+
+Interpretation:
+
+We have 517,58 ≥ t74;0.05 et 11,83≥ t74;0.05. In addition p.val ≤ 0.05 for all coefficients a
+and b.
+Then We rejet H0. 
+So the equation is y=2387,26t+155446,55.
+
+                                             Method 2(ARIMA)
+
+Determination of the forecast model (seasonal ARIMA)
+Using the forecast package, we will estimate the best model using the auto.arima () function
+Series: XCSV
+ARIMA (1,1,1) with drift
+Coefficients:
+ar1 ma1 drift
+0.1943 -0.9079 24447.96
+s.e. 0.1281 0.0782 1995.80
+sigma2
+estimated as 1.928e + 10: log likelihood = -1298.67
+AIC = 2605.34 AICc = 2605.77 BIC = 2615.68
+
+
+
+Interpretation
+We have an ARIMA model with constant. The series has been differentiated once to make it stationary.
+The model can be written in the form
+Ct = 0.1943Ct − 1 - 0, 9079εt − 1 + 24447.96
+Ct denotes the consumption of drinking water at time t.
+εt − 1 denotes white noise
+Forecast
+We will forecast drinking water consumption for the past 9 months.
+forecast (fit, h = 9)
+ Interpretation:
+We have forecasts of drinking water consumption over 9 months from April 2016. The interval of
+confidence varies depending on the α chosen. For example, for the month of April 2016
+- At threshold α = 0.2 ⇒ we have a consumption of 5800954m3 of water with a confidence interval of
+[5625517; 5976391]
+- At threshold α = 0.05 ⇒ 5800954m3 of water are consumed with a confidence interval of [5532647; 6069261]
+plot (forecast (fit, h = 9), xlab = "Year", ylab = "consumption")
+
+                                          Method 3(Exponential smoothing)
+
+We are going to estimate the model coefficients through the ets () function of the forecast package.
+We get the following result:
+ETS (M, A, A)
+Call:
+Forecast method: HoltWinters
+Model Information:
+Holt-Winters exponential smoothing with trend and multiplicative seasonal component.
+Call:
+HoltWinters (x = consom1.ts, seasonal = "mult", start.periods = 2, optim.start = c (alpha = 0.3, beta = 0.1,
+gamma = 0.1))
+37
+Smoothing parameters:
+alpha: 0.124412
+beta: 0.001356962
+gamma: 0.3531264
+Coefficients:
+a 5.731808 e + 06
+b 2.129292e + 04
+s1 1,140367e + 00
+s2 1.083352e + 00
+s3 1,000555e + 00
+s4 9.230584e-01
+s5 8.660622e-01
+s6 8,765751e-01
+s7 9.684193e-01
+s8 1.007862e + 00
+s9 1.061618e + 00
+s10 1.020142e + 00
+s11 1.054966e + 00
+s12 1.147612e + 00
+Interpretation
+We have a model with multiplicative errors, additive trend and additive seasonality (MAA).
+- The parameter alpha = 0.1244 is low (close to 0). This means that the average is almost constant.
+- Beta = 0.001356 is very close to 0. This means that the trend has been changed very slightly.
+- The gamma parameter is neither close to 1, nor close to 0. Nevertheless, we can say that the seasonality has
+been smoothed out.
+
+
+                  Choice of the most efficient model
+
+
+Above, we specified that the model which will be retained will be the one which minimizes the criterion of the RMSE.
+The table below represents the different RMSE calculated on the basis of the forecasts of the three models.
+       Simple linear         regression SARIMA      Exponential smoothing
+RMSE 1,441,350.6935             448665.5561             171276.8868
+Then it appears that the model obtained by the exponential smoothing method is the most efficient. So we
+remember that the forecast of future consumption for the last 9 months of 2016 is that obtained by the
+exponential smoothing.
